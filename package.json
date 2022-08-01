@@ -30,7 +30,8 @@
     "socket.io": "^4.5.1",
     "sqlite3": "^5.0.8",
     "winston": "^3.8.1",
-    "yargs": "^17.5.1"
+    "yargs": "^17.5.1",
+    "@faker-js/faker": "^7.3.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
