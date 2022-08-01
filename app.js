@@ -80,7 +80,7 @@ const startServer = () => {
     httpServer.on('error', (err) => logger.error(err));
 }
 
-const puerto = config.argv.p ? config.argv.p : config.argv._.length > 0 ? config.argv._[0] : 8080
+const puerto = config.PORT;
 const modo = config.argv.modo || 'fork';
 
 
