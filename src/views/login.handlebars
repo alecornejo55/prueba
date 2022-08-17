@@ -1,0 +1,25 @@
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center h2">Inicie sesión</h1>
+            <div id="errMsg"></div>
+            <form name="formLogin" id="formLogin" method="post" action="/login">
+                <!-- Email input -->
+                <div class="form-outline mb-4 mt-4">
+                    <input type="text" id="username" name="username" class="form-control" required/>
+                    <label class="form-label" for="username">Email</label>
+                </div>
+                <!-- Contraseña input -->
+                <div class="form-outline mb-4 mt-4">
+                    <input type="password" id="password" name="password" class="form-control" required/>
+                    <label class="form-label" for="password">Contraseña</label>
+                </div>
+                <!-- Submit button -->
+                <button type="submit" id="btnEnviar" class="btn btn-primary btn-block mb-4">Iniciar sesión</button>
+                <a href="/signup" class="btn btn-block btn-link text-capitalize">Registrarse</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/js/login.js"></script>

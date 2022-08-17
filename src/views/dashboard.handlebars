@@ -1,0 +1,55 @@
+<style>
+    .rounded{
+  border-radius: 8px !important;
+  cursor: pointer;
+}
+.img-fluid{
+	width:100%;
+}
+.card-wrapper .card-rotating{
+	height: auto;
+}
+.face.back{
+  height: auto;
+}
+</style>
+<!-- Navbar -->
+{{> navbar }}
+<!-- Navbar -->
+<input type="hidden" name="userCart" id="userCart" value="{{ user.cart.id }}">
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h1 class="text-center h2"></h1>
+        </div>
+    </div>
+    <div class="row" id="products">
+        {{#if products.length}}
+        {{#each products}}
+        <div class="col-md-4 col-xl-3 pb-3">
+            <div class="card">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <img src="{{this.image}}" class="img-fluid" />
+                    <a href="#!">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
+                    </a>
+                </div>
+                <div class="card-header">${{this.price}}</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{this.name}}</h5>
+                    <p class="card-text">{{this.description}}</p>
+                    <p class="card-text">Stock: {{this.stock}}</p>
+                    <button type="button" class="btn btn-primary px-3 addCart" data-id="{{this.id}}">
+                        <i class="fas fa-shopping-cart addCart" data-id="{{this.id}}"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        {{/if}}
+    </div>
+</div>
+<!-- Canvas -->
+{{> offcanvas }}
+<!-- Canvas -->
+<script src="/js/dashboard.js"></script>

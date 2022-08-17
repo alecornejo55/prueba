@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-    username: {type: String, required: true},
-    password: {type: String, required: true },
+    username: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true },
+    name: { type: String, required: true, trim: true, message: 'El nombre es requerido' },
+    address: { type: String, required: true, trim: true },
+    age: { type: Number, required: true },
+    phone: { type: String, required: true, trim: true },
+    avatar: { type: String, required: true, trim: true },
+    admin: { type: Boolean, required: true, default: false },
     dateTime: {type: Date, required: true, default: Date.now},
 });
 userSchema.methods.toJSON = function(){
@@ -11,22 +16,6 @@ userSchema.methods.toJSON = function(){
     data.id = _id;
     return data;
 }
-
-//helpful functions: encrypt password
-// userSchema.pre("save", function(next) {
-//     if (!this.isModified("password")) {
-//         return next();
-//     }
-//     this.password = bcrypt.hashSync(this.password, 10);
-//     next();
-// });
-
-//helpful functions: compare passwords
-userSchema.methods.comparePassword = (password, hash) => {
-    let comp = bcrypt.compareSync(password, hash)
-    return comp;
-}
-
-const user = mongoose.model('users', userSchema);
+const user = mongoose.model('user', userSchema);
 
 module.exports = user;

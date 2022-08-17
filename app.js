@@ -1,39 +1,34 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
+const flash = require('connect-flash');
+const app = express();
 const config = require('./src/config/globals');
-
 // traemos el archivo de configuracion de winston
-const { createLogger } = require('./src/config/winston.config');
+const { createLogger } = require('./src/config/logger.config');
 const logger = createLogger('PROD');
 
-// instanciamos passport
+// Handlebars
+const Handlebars = require('handlebars')
+const { engine } = require('express-handlebars');
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+
+// Pasport
 const passport = require('passport');
 const { initializePassport } = require('./src/config/passport.config');
-// persistencia por MongoDb y Atlas
+
+// Session 
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
 const MongoStore = require('connect-mongo');
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
-// instanciamos express
-const app = express();
-
-// instanciamos socket io
-const { Server: HttpServer } = require('http');
-const { Server: IOServer } = require('socket.io');
-const httpServer = new HttpServer(app);
-const io = new IOServer(httpServer);
-app.set('socketio', io);
-
-// instanciamos las rutas
-const testRoute = require('./src/routes/test');
-const fakerRoute = require('./src/routes/faker');
-const indexRoute = require('./src/routes/index');
-const infoRoute = require('./src/routes/info');
-const apiRoute = require('./src/routes/api');
+global.ADMIN = true;
+const { productRouterApi, cartRouterApi, publicRouter, userRouter } = require('./src/routes');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.set("logger", logger);
 
 app.use(session({
     store: MongoStore.create({
@@ -45,59 +40,48 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     cookie: {
-        maxAge: 1000 * 60, // 1 segundo * 60 = 1 minuto
+        maxAge: 1000 * 60 * 20, // 1 segundo * 60 = 1 minuto
     }
 }));
 
-app.use((req, res, next) => {
-    logger.info(`${req.method} at ${req.path}`);
-    next();
-});
-
+// Passport config
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
-app.set('views', './views');
-app.set("logger", logger);
+app.use(flash());
 
-app.use('/', indexRoute);
+// Handlebars config
+app.engine('handlebars', engine({
+    handlebars: allowInsecurePrototypeAccess(Handlebars)
+}));
+// app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+
+app.set('views', './src/views');
 app.use(express.static(__dirname + "/src/public"));
-app.use('/api/productos-test', testRoute);
-app.use('/test', fakerRoute);
-app.use('/info', infoRoute);
-app.use('/api', apiRoute);
-app.use("*", (req, res) => {
-    const error_message = `Ruta ${req.originalUrl} método ${req.method} no implementada`;
-    logger.warn(error_message)
-    res.status(404).json({"message": error_message})
+
+app.use('/api/product', productRouterApi);
+app.use('/api/cart', cartRouterApi);
+app.use('/api/user', userRouter);
+app.use('/', publicRouter);
+
+/** comodín */
+app.use('*', function(req, res){
+    const path = req.originalUrl;
+    const metodo = req.method;
+    res.status(401).json({
+        error: -2,
+        descripcion:`ruta ${path} método ${metodo} no implementada`
+    });
 });
 
-const startServer = () => {
-    httpServer.listen(puerto, () => {
-        logger.info(`Escuchando port: ${httpServer.address().port} en proceso ID: (${process.pid})`); 
-    });
+// Conexión al puerto
+// const server = app.listen(config.PORT, () => {
+//     logger.info(`Servidor escuchando en el puerto ${server.address().port}`);
+// });
+// server.on('error', error => logger.info(`Error en el servidor: ${error}`));
 
-    httpServer.on('error', (err) => logger.error(err));
-}
-
-const puerto = config.PORT;
-const modo = config.argv.modo || 'fork';
-
-
-if (modo !== 'fork'){
-    if (cluster.isPrimary) {
-        logger.info(`Proceso principal ID:(${process.pid})`)
-        for(let i = 0; i <  core.cpus().length; i++) {
-            cluster.fork();
-        }
-    
-        cluster.on('exit', (worker) => {
-            cluster.fork();
-        });
-    
-    } else {
-        startServer();
-    }
-} else {
-    startServer();
-}
+const server = app.listen(process.env.PORT || 5000, () => {
+    const port = server.address().port;
+    console.log(`Express is working on port ${port}`);
+  });

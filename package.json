@@ -1,5 +1,5 @@
 {
-  "name": "entregable7",
+  "name": "preentrega2",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -11,29 +11,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.5",
     "bcrypt": "^5.0.1",
-    "compression": "^1.7.4",
+    "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-handlebars": "^6.0.6",
     "express-session": "^1.17.3",
-    "forever": "^4.0.3",
-    "knex": "^2.1.0",
-    "mongoose": "^6.4.5",
-    "mysql": "^2.18.1",
-    "normalizr": "^3.6.2",
+    "mongoose": "^6.4.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.7.7",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "session-file-store": "^1.5.0",
-    "socket.io": "^4.5.1",
-    "sqlite3": "^5.0.8",
-    "winston": "^3.8.1",
-    "yargs": "^17.5.1",
-    "@faker-js/faker": "^7.3.0"
+    "winston": "^3.8.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.18"
+    "handlebars": "^4.5.0",
+    "nodemon": "^2.0.16"
   }
 }
